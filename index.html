@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SQL Development Environment</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3B82F6",
+              "background-light": "#F8FAFC",
+              "background-dark": "#0F172A",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#1E293B",
+              "border-light": "#E2E8F0",
+              "border-dark": "#334155",
+              "text-primary-light": "#0F172A",
+              "text-primary-dark": "#E2E8F0",
+              "text-secondary-light": "#475569",
+              "text-secondary-dark": "#94A3B8",
+              "green-light": "#16A34A",
+              "green-dark": "#4ADE80",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["Fira Code", "monospace"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+              lg: "0.75rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .code-editor {
+        font-family: "Fira Code", monospace;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-text-primary-light dark:text-text-primary-dark antialiased"
+  >
+    <div class="flex flex-col h-screen">
+      <header
+        class="flex-shrink-0 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark px-4 py-2 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="material-icons text-primary text-2xl">dataset</span>
+            <span class="font-bold text-lg">RunSQL</span>
+            <span
+              class="bg-blue-100 text-primary text-xs font-semibold px-2 py-0.5 rounded-full dark:bg-blue-900/50 dark:text-blue-300"
+              >Beta</span
+            >
+          </div>
+          <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+          <h1
+            class="text-base font-medium text-text-primary-light dark:text-text-primary-dark"
+          >
+            Example Run
+          </h1>
+          <div class="h-6 w-px bg-border-light dark:bg-border-dark"></div>
+          <button
+            class="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded px-3 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+          >
+            <span class="material-icons-outlined text-base">storage</span>
+            PostgreSQL 16.6
+            <span
+              class="material-icons-outlined text-base text-text-secondary-light dark:text-text-secondary-dark"
+              >expand_more</span
+            >
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            class="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded px-3 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+          >
+            <span class="material-icons-outlined text-base">fork_right</span>
+            Fork
+            <div
+              class="text-xs font-mono bg-slate-100 dark:bg-slate-700 text-text-secondary-light dark:text-text-secondary-dark px-1.5 py-0.5 rounded"
+            >
+              Ctrl-S
+            </div>
+          </button>
+          <button
+            class="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded px-3 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+          >
+            <span class="material-icons-outlined text-base">file_upload</span>
+            Import
+            <span
+              class="material-icons-outlined text-base text-text-secondary-light dark:text-text-secondary-dark"
+              >expand_more</span
+            >
+          </button>
+          <div class="h-6 w-px bg-border-light dark:bg-border-dark mx-2"></div>
+          <button
+            class="flex items-center gap-2 text-sm text-text-secondary-light dark:text-text-secondary-dark hover:text-text-primary-light dark:hover:text-text-primary-dark"
+          >
+            <span class="material-icons-outlined text-base">help_outline</span>
+            Help
+            <span class="material-icons-outlined text-base">expand_more</span>
+          </button>
+          <button
+            class="flex items-center gap-2 bg-primary text-white rounded px-3 py-1 text-sm font-semibold hover:bg-blue-600"
+          >
+            <span class="material-icons-outlined text-base">arrow_forward</span>
+            Sign in
+          </button>
+        </div>
+      </header>
+      <main
+        class="flex-grow p-4 grid grid-cols-2 grid-rows-2 gap-4 overflow-hidden"
+      >
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark flex flex-col overflow-hidden"
+        >
+          <div
+            class="flex-shrink-0 flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                class="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold"
+              >
+                1
+              </div>
+              <h2 class="font-semibold">Define Database Structure</h2>
+              <div
+                class="text-xs font-mono bg-slate-100 dark:bg-slate-700 text-text-secondary-light dark:text-text-secondary-dark px-1.5 py-0.5 rounded"
+              >
+                Ctrl-Alt-1
+              </div>
+            </div>
+            <button
+              class="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              <span
+                class="material-icons-outlined text-xl text-text-secondary-light dark:text-text-secondary-dark"
+                >auto_awesome_motion</span
+              >
+            </button>
+          </div>
+          <div
+            class="flex-grow overflow-auto p-4 code-editor text-sm no-scrollbar"
+          >
+            <pre
+              class="whitespace-pre"
+            ><code class="language-sql"><span class="text-gray-400">1   </span><span class="text-green-600 dark:text-green-400">// Use DBML to define your database structure</span>
+<span class="text-gray-400">2   </span><span class="text-green-600 dark:text-green-400">// Docs: https://dbml.dbdiagram.io/docs</span>
+<span class="text-gray-400">3   </span>
+<span class="text-gray-400">4   </span><span class="text-cyan-600 dark:text-cyan-400">Table</span> users {
+<span class="text-gray-400">5   </span>  id <span class="text-purple-600 dark:text-purple-400">integer</span> [<span class="text-yellow-600 dark:text-yellow-400">primary key</span>]
+<span class="text-gray-400">6   </span>  username <span class="text-purple-600 dark:text-purple-400">varchar</span>(<span class="text-orange-500">50</span>)
+<span class="text-gray-400">7   </span>  role <span class="text-purple-600 dark:text-purple-400">varchar</span>(<span class="text-orange-500">50</span>)
+<span class="text-gray-400">8   </span>  age <span class="text-purple-600 dark:text-purple-400">integer</span> [check: `age &gt; 0`]
+<span class="text-gray-400">9   </span>}
+<span class="text-gray-400">10  </span>
+<span class="text-gray-400">11  </span><span class="text-cyan-600 dark:text-cyan-400">Table</span> posts {
+<span class="text-gray-400">12  </span>  id <span class="text-purple-600 dark:text-purple-400">integer</span> [<span class="text-yellow-600 dark:text-yellow-400">primary key</span>]
+<span class="text-gray-400">13  </span>  title <span class="text-purple-600 dark:text-purple-400">varchar</span>(<span class="text-orange-500">50</span>)
+<span class="text-gray-400">14  </span>  body <span class="text-purple-600 dark:text-purple-400">text</span> [note: 'Content of the post']
+<span class="text-gray-400">15  </span>  user_id <span class="text-purple-600 dark:text-purple-400">integer</span>
+<span class="text-gray-400">16  </span>  status <span class="text-purple-600 dark:text-purple-400">varchar</span>(<span class="text-orange-500">50</span>)
+<span class="text-gray-400">17  </span>}
+<span class="text-gray-400">18  </span>
+<span class="text-gray-400">19  </span><span class="text-cyan-600 dark:text-cyan-400">Ref:</span> posts.user_id &gt; users.id <span class="text-green-600 dark:text-green-400">// many-to-one</span>
+<span class="text-gray-400">20  </span>
+</code></pre>
+          </div>
+        </div>
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark flex flex-col overflow-hidden"
+        >
+          <div
+            class="flex-shrink-0 flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                class="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold"
+              >
+                3
+              </div>
+              <h2 class="font-semibold">Write SQL Query</h2>
+              <div
+                class="text-xs font-mono bg-slate-100 dark:bg-slate-700 text-text-secondary-light dark:text-text-secondary-dark px-1.5 py-0.5 rounded"
+              >
+                Ctrl-Alt-3
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                class="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded px-3 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                <span class="material-icons-outlined text-base">save</span>
+                Save
+              </button>
+              <button
+                class="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded px-3 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                <span class="material-icons-outlined text-base"
+                  >folder_open</span
+                >
+                Load
+              </button>
+            </div>
+          </div>
+          <div
+            class="flex-grow overflow-auto p-4 code-editor text-sm no-scrollbar"
+          >
+            <pre
+              class="whitespace-pre"
+            ><code class="language-sql"><span class="text-gray-400">1   </span><span class="text-green-600 dark:text-green-400">-- Get all users and related posts</span>
+<span class="text-gray-400">2   </span><span class="text-cyan-600 dark:text-cyan-400">SELECT</span> *
+<span class="text-gray-400">3   </span><span class="text-cyan-600 dark:text-cyan-400">FROM</span> users u
+<span class="text-gray-400">4   </span><span class="text-cyan-600 dark:text-cyan-400">JOIN</span> posts p <span class="text-cyan-600 dark:text-cyan-400">ON</span> u.id = p.user_id;
+<span class="text-gray-400">5   </span>
+</code></pre>
+          </div>
+          <div
+            class="flex-shrink-0 p-3 border-t border-border-light dark:border-border-dark flex items-center gap-4"
+          >
+            <button
+              class="bg-primary text-white font-semibold rounded px-4 py-2 flex items-center gap-2 hover:bg-blue-600"
+            >
+              <span class="material-icons text-xl">play_arrow</span>
+              Run
+              <div
+                class="text-xs font-mono bg-blue-700 text-blue-200 px-1.5 py-0.5 rounded"
+              >
+                Ctrl-↵
+              </div>
+            </button>
+            <div
+              class="flex items-center gap-2 text-sm text-green-light dark:text-green-dark"
+            >
+              <span class="material-icons-outlined">check</span>
+              <span>3 rows returned. Executed in 1.739958 ms.</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark flex flex-col overflow-hidden"
+        >
+          <div
+            class="flex-shrink-0 flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                class="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold"
+              >
+                2
+              </div>
+              <h2 class="font-semibold">Define Data</h2>
+              <div
+                class="text-xs font-mono bg-slate-100 dark:bg-slate-700 text-text-secondary-light dark:text-text-secondary-dark px-1.5 py-0.5 rounded"
+              >
+                Ctrl-Alt-2
+              </div>
+            </div>
+            <button
+              class="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              <span
+                class="material-icons-outlined text-xl text-text-secondary-light dark:text-text-secondary-dark"
+                >auto_awesome_motion</span
+              >
+            </button>
+          </div>
+          <div class="flex-shrink-0 p-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <button
+                class="bg-slate-100 dark:bg-slate-700 text-sm font-medium px-3 py-1 rounded"
+              >
+                users
+              </button>
+              <button
+                class="text-sm font-medium px-3 py-1 rounded text-text-secondary-light dark:text-text-secondary-dark hover:bg-slate-100 dark:hover:bg-slate-700"
+              >
+                posts
+              </button>
+            </div>
+            <span
+              class="text-sm text-text-secondary-light dark:text-text-secondary-dark"
+              >2 rows, 4 columns</span
+            >
+          </div>
+          <div class="flex-grow overflow-auto no-scrollbar">
+            <table class="w-full text-sm text-left">
+              <thead
+                class="text-text-secondary-light dark:text-text-secondary-dark font-medium"
+              >
+                <tr
+                  class="border-b border-t border-border-light dark:border-border-dark"
+                >
+                  <th class="px-4 py-2" scope="col">id</th>
+                  <th class="px-4 py-2" scope="col">username</th>
+                  <th class="px-4 py-2" scope="col">role</th>
+                  <th class="px-4 py-2" scope="col">age</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="border-b border-border-light dark:border-border-dark"
+                >
+                  <td class="px-4 py-2">1</td>
+                  <td class="px-4 py-2">John</td>
+                  <td class="px-4 py-2">admin</td>
+                  <td class="px-4 py-2">20</td>
+                </tr>
+                <tr
+                  class="border-b border-border-light dark:border-border-dark"
+                >
+                  <td class="px-4 py-2">2</td>
+                  <td class="px-4 py-2">Jane</td>
+                  <td class="px-4 py-2">user</td>
+                  <td class="px-4 py-2">30</td>
+                </tr>
+                <tr
+                  class="text-text-secondary-light dark:text-text-secondary-dark"
+                >
+                  <td class="px-4 py-2" colspan="4">
+                    <button
+                      class="flex items-center gap-2 hover:text-text-primary-light dark:hover:text-text-primary-dark"
+                    >
+                      <span class="material-icons-outlined text-base">add</span>
+                      New row
+                      <div
+                        class="text-xs font-mono bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded"
+                      >
+                        ↑↵
+                      </div>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div
+          class="bg-surface-light dark:bg-surface-dark rounded-lg border border-border-light dark:border-border-dark flex flex-col overflow-hidden"
+        >
+          <div
+            class="flex-shrink-0 flex items-center justify-between p-3 border-b border-border-light dark:border-border-dark"
+          >
+            <h2 class="font-semibold">Query Result</h2>
+            <button
+              class="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded px-3 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              <span class="material-icons-outlined text-base">download</span>
+              Download CSV
+            </button>
+          </div>
+          <div class="flex-grow overflow-auto no-scrollbar">
+            <table class="w-full text-sm text-left">
+              <thead
+                class="text-text-secondary-light dark:text-text-secondary-dark font-medium"
+              >
+                <tr
+                  class="border-b border-border-light dark:border-border-dark"
+                >
+                  <th class="px-4 py-2" scope="col">id</th>
+                  <th class="px-4 py-2" scope="col">username</th>
+                  <th class="px-4 py-2" scope="col">role</th>
+                  <th class="px-4 py-2" scope="col">title</th>
+                  <th class="px-4 py-2" scope="col">body</th>
+                  <th class="px-4 py-2" scope="col">user_id</th>
+                  <th class="px-4 py-2" scope="col">status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="border-b border-border-light dark:border-border-dark"
+                >
+                  <td class="px-4 py-2">1</td>
+                  <td class="px-4 py-2">John</td>
+                  <td class="px-4 py-2">admin</td>
+                  <td class="px-4 py-2">Hello World</td>
+                  <td class="px-4 py-2">This is my first post</td>
+                  <td class="px-4 py-2">1</td>
+                  <td class="px-4 py-2">published</td>
+                </tr>
+                <tr
+                  class="border-b border-border-light dark:border-border-dark"
+                >
+                  <td class="px-4 py-2">2</td>
+                  <td class="px-4 py-2">John</td>
+                  <td class="px-4 py-2">admin</td>
+                  <td class="px-4 py-2">Hello World</td>
+                  <td class="px-4 py-2">This is my second post</td>
+                  <td class="px-4 py-2">1</td>
+                  <td class="px-4 py-2">published</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2">3</td>
+                  <td class="px-4 py-2">Jane</td>
+                  <td class="px-4 py-2">user</td>
+                  <td class="px-4 py-2">Hello World</td>
+                  <td class="px-4 py-2">This is my third post</td>
+                  <td class="px-4 py-2">2</td>
+                  <td class="px-4 py-2">published</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
